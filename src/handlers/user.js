@@ -1,21 +1,9 @@
-const { MongoClient } = require('mongodb')
-const { v4: uuidv4 } = require('uuid')
-const jwt = require('jsonwebtoken')
 const { encryptPass } = require('./crypt')
+const { client } = require('./mongodb')
+const { getGuid, getJWT } = require('./token')
 
-const url = `mongodb://localhost:27017`
-
-const client = new MongoClient(url)
-
-const jwtPassWord = 'role21'
-
-async function run() {
-  await client.connect()
-  const database = client.db('sky-test')
-  const collection = database.collection('users')
-  await collection.createIndex( { 'email': 1 }, { unique: true } )
-}
-run().catch(console.dir)
+const databaseName = 'sky-test'
+const collectionName = 'users'
 
 async function fetchUser(user = {}) {
   await client.connect()
@@ -27,14 +15,14 @@ async function fetchUser(user = {}) {
 
 async function insertUser(user = {}) {
   await client.connect()
-  const database = client.db('sky-test')
-  const collection = database.collection('users')
+  const database = client.db(databaseName)
+  const collection = database.collection(collectionName)
 
   const dateNow = new Date()
-  const _id = uuidv4()
+  const _id = getGuid()
 
   const { email } = user
-  const token = jwt.sign({ email }, jwtPassWord)
+  const token = getJWT({ email })
   const senha = await encryptPass(user.senha)
 
   await collection.insertOne({
@@ -52,19 +40,38 @@ async function insertUser(user = {}) {
 
 async function loginUser(user = {}) {
   await client.connect()
-  const database = client.db('sky-test')
-  const collection = database.collection('users')
+  const database = client.db(databaseName)
+  const collection = database.collection(collectionName)
   const dateNow = new Date()
 
   const { email } = user
-  const token = jwt.sign({ email }, jwtPassWord)
+  const token = getJWT({ email })
 
   await collection.updateOne(user, { $set: { token, ultimo_login: dateNow } })
   return true
+}
+
+async function fetchParsedUser(user = {}) {
+  const {
+    _id,
+    data_criacao,
+    data_atualizacao,
+    ultimo_login,
+    token,
+  } = await fetchUser(user)
+
+  return {
+    data_criacao,
+    data_atualizacao,
+    ultimo_login,
+    token,
+    id: _id,
+  }
 }
 
 module.exports = {
   fetchUser,
   insertUser,
   loginUser,
+  fetchParsedUser,
 }
