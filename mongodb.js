@@ -47,7 +47,8 @@ async function loginUser(user = {}) {
   const database = client.db('sky-test')
   const collection = database.collection('users')
   const dateNow = new Date()
-  await collection.updateOne(user, { $set: { ultimo_login: dateNow } })
+  const token = uuidv4()
+  await collection.updateOne(user, { $set: { token, ultimo_login: dateNow } })
   return true
 }
 

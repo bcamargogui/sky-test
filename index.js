@@ -76,9 +76,45 @@ app.post('/sign-in', async (req, res) => {
   }
 })
 
-app.post('/', (req, res) => {
-  const { body } = req
-  response(res, { body })
+function extractBearekToken(token = '') {
+  const replaceWord = 'Bearer '
+  return token.replace(replaceWord, '')
+}
+
+app.get('/search-user/:user_id', async (req, res) => {
+  const noAuthorizedMessage = 'Não autorizado'
+  const dateNow = new Date()
+
+  try {
+    const { authorization } = req.headers
+    if (!authorization) return responseError(res, noAuthorizedMessage, 401)
+
+    const { user_id } = req.params
+    const user = await fetchUser({ _id: user_id })
+    if (!user) throw new Error('Usuário não encontrado')
+
+    const token = extractBearekToken(authorization)
+    if (token !== user.token) {
+      return responseError(res, noAuthorizedMessage, 401)
+    }
+
+    const MS_PER_MINUTE = 60000
+    const tokenLimitMinutes = 30
+    const thirtyMinutesLaterDate = new Date(
+        dateNow -
+      tokenLimitMinutes *
+      MS_PER_MINUTE,
+    )
+    const tokenStillValid = user.ultimo_login >= thirtyMinutesLaterDate
+
+    if (!tokenStillValid) return responseError(res, 'Sessão inválida', 401)
+
+    const parsedUser = await responseUser(user)
+    response(res, parsedUser)
+  } catch (error) {
+    const { message } = error
+    responseError(res, message)
+  }
 })
 
 
