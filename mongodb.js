@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb')
 const { v4: uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
+const { encryptPass } = require('./crypt')
 
 const url = `mongodb://localhost:27017`
 
@@ -34,9 +35,11 @@ async function insertUser(user = {}) {
 
   const { email } = user
   const token = jwt.sign({ email }, jwtPassWord)
+  const senha = await encryptPass(user.senha)
 
   await collection.insertOne({
     ...user,
+    senha,
     _id,
     token,
     data_criacao: dateNow,

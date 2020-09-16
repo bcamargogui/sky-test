@@ -1,6 +1,7 @@
 const app = require('express')()
 const bodyParser = require('body-parser')
 const { fetchUser, insertUser, loginUser } = require('./mongodb')
+const { comparePass } = require('./crypt')
 
 // constants
 const port = 3000
@@ -65,7 +66,9 @@ app.post('/sign-in', async (req, res) => {
     const { email, senha } = req.body
     const user = await fetchUser({ email })
     if (!user) return responseError(res, errorMessage)
-    if (senha !== user.senha) return responseError(res, errorMessage, 401)
+
+    const isSamePass = await comparePass(senha, user.senha)
+    if (!isSamePass) return responseError(res, errorMessage, 401)
 
     await loginUser({ email })
     const userResponse = await responseUser({ email })
