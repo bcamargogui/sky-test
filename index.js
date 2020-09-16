@@ -1,6 +1,6 @@
 const app = require('express')()
 const bodyParser = require('body-parser')
-const { fetchUser, insertUser } = require('./mongodb')
+const { fetchUser, insertUser, loginUser } = require('./mongodb')
 
 // constants
 const port = 3000
@@ -12,8 +12,10 @@ function response(resource = {}, data = {}, status = 200) {
 
 function responseError(
     resource = {},
-    mensagem = 'Ops, algo deu errado, tente novamente mais tarde!') {
-  resource.status(500).send({ mensagem })
+    mensagem = 'Ops, algo deu errado, tente novamente mais tarde!',
+    status = 500,
+) {
+  resource.status(status).send({ mensagem })
 }
 
 // parse application/json
@@ -53,6 +55,24 @@ app.post('/sign-up', async (req, res) => {
     const duplicateKeyError = 11000
     if (code !== duplicateKeyError) responseError(res, message)
     responseError(res, 'E-mail já existente')
+  }
+})
+
+app.post('/sign-in', async (req, res) => {
+  const errorMessage = 'Usuário e/ou senha inválidos'
+
+  try {
+    const { email, senha } = req.body
+    const user = await fetchUser({ email })
+    if (!user) return responseError(res, errorMessage)
+    if (senha !== user.senha) return responseError(res, errorMessage, 401)
+
+    await loginUser({ email })
+    const userResponse = await responseUser({ email })
+    response(res, userResponse)
+  } catch (error) {
+    const { message } = error
+    responseError(res, message)
   }
 })
 

@@ -11,7 +11,6 @@ async function run() {
   const collection = database.collection('users')
   await collection.createIndex( { 'email': 1 }, { unique: true } )
 }
-
 run().catch(console.dir)
 
 async function fetchUser(user = {}) {
@@ -43,7 +42,17 @@ async function insertUser(user = {}) {
   return true
 }
 
+async function loginUser(user = {}) {
+  await client.connect()
+  const database = client.db('sky-test')
+  const collection = database.collection('users')
+  const dateNow = new Date()
+  await collection.updateOne(user, { $set: { ultimo_login: dateNow } })
+  return true
+}
+
 module.exports = {
   fetchUser,
   insertUser,
+  loginUser,
 }
