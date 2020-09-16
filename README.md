@@ -16,3 +16,18 @@ Todas as respostas de erro devem retornar o objeto:
   "mensagem": "mensagem de erro"
 }
 ```
+
+## Requisitos
+
+- Persistência de dados
+- Gestão de dependências via gerenciador de pacotes (npm)
+- Utilização de Eslint
+- API: Express, Hapi ou similares.
+- Utilizar banco nosql
+
+## Requisitos desejáveis
+
+- JWT como token
+- Testes unitários
+- Criptografia não reversível (hash) na senha e no token
+- Mongo
