@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "488a5560-57bb-4d7e-aff1-0858678bee35",
+		"name": "Sky test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "API online test",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"foo\": \"bar\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign-up",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "455c2426-3bfb-4070-a4b5-6a5ebd60d415",
+						"exec": [
+							"pm.test(\"Set token and user ID\", function () {",
+							"  pm.response.to.have.status(200);",
+							"  const responseJson = pm.response.json();",
+							"  pm.collectionVariables.set(\"apiToken\", responseJson.token);",
+							"  pm.collectionVariables.set(\"userId\", responseJson.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nome\": \"Fulano\",\n    \"email\": \"{{email}}\",\n    \"senha\": \"{{password}}\",\n    \"telefones\": [\n        {\n            \"numero\": \"123456789\",\n            \"ddd\": \"11\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/sign-up",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign-in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7fc75eba-8fb4-4559-95cd-cc7bff5fd48b",
+						"exec": [
+							"pm.test(\"Set token and user ID\", function () {",
+							"  pm.response.to.have.status(200);",
+							"  const responseJson = pm.response.json();",
+							"  pm.collectionVariables.set(\"apiToken\", responseJson.token);",
+							"  pm.collectionVariables.set(\"userId\", responseJson.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"senha\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/sign-in",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{apiToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/search-user/:user_id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"search-user",
+						":user_id"
+					],
+					"variable": [
+						{
+							"key": "user_id",
+							"value": "{{userId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "da1993e8-6c4e-48e2-8e54-6ac51d5cffce",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "6a0d5b1d-1970-4494-a669-060856226881",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "66c29212-0834-4db8-8e08-cccb72341d8e",
+			"key": "url",
+			"value": "localhost:3000"
+		},
+		{
+			"id": "969e2f56-a192-4e06-a426-0778b18779d5",
+			"key": "apiToken",
+			"value": ""
+		},
+		{
+			"id": "64a3ffb7-6529-4317-bfe6-296175b716ef",
+			"key": "email",
+			"value": "gbragamonte@gmail.com"
+		},
+		{
+			"id": "e444326c-6a30-4771-88d4-2293281ea384",
+			"key": "password",
+			"value": "1234"
+		},
+		{
+			"id": "0fe68984-9229-44d5-b357-7552c54bf486",
+			"key": "userId",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
