@@ -81,6 +81,13 @@ app.post('/', (req, res) => {
   response(res, { body })
 })
 
+
+app.use(function(req, res, next) {
+  responseError(res,
+      'Endpoint não encontrado, verifique a url e tente novamente!',
+      404)
+})
+
 // application listener
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
