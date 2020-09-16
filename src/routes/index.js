@@ -8,6 +8,7 @@ const {
   loginUser,
 } = require('../handlers/user')
 const { extractBearekToken } = require('../handlers/token')
+const { subtractMinutes } = require('../handlers/date')
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
@@ -66,13 +67,8 @@ app.get('/search-user/:user_id', async (req, res) => {
       return responseError(res, noAuthorizedMessage, 401)
     }
 
-    const MS_PER_MINUTE = 60000
     const tokenLimitMinutes = 30
-    const thirtyMinutesLaterDate = new Date(
-        dateNow -
-      tokenLimitMinutes *
-      MS_PER_MINUTE,
-    )
+    const thirtyMinutesLaterDate = subtractMinutes(tokenLimitMinutes, dateNow)
     const tokenStillValid = user.ultimo_login >= thirtyMinutesLaterDate
 
     if (!tokenStillValid) return responseError(res, 'Sessão inválida', 401)
