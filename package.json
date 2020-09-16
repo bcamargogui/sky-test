@@ -7,6 +7,7 @@
     "serve": "node index.js",
     "dev": "nodemon index.js",
     "lint": "npx eslint **.js",
+    "kill": "killall node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,7 +22,9 @@
   "homepage": "https://github.com/gBragamonte/sky-test#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongodb": "^3.6.2",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "eslint": "^7.9.0",
