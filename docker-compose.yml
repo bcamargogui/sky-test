@@ -1,0 +1,15 @@
+
+version: '3'
+
+services:
+  nodejs:
+    build: '.'
+    depends_on:
+      - mongo
+    ports:
+      - '3000:3000'
+
+  mongo:
+    image: 'mongo'
+    ports:
+      - '27018:27017'
